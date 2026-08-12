@@ -11,7 +11,7 @@ const app = express();
 
 connectDB();
 
-app.use(cors({ origin: process.env.CLIENT_URL || "*" }));
+app.use(cors({ origin: process.env.CLIENT_URL || process.env.CLIENT_lIVE_URL ||"*" }));
 app.use(express.json());
 
 app.get("/api/health", (req, res) => {
