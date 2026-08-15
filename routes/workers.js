@@ -85,9 +85,26 @@ router.put("/me", protect, requireRole("worker"), async (req, res) => {
     if (yearsExperience !== undefined) worker.yearsExperience = yearsExperience;
     if (isAvailable !== undefined) worker.isAvailable = isAvailable;
     if (avatarUrl !== undefined) worker.avatarUrl = avatarUrl;
-    if (lng && lat) {
-      worker.location.coordinates = [Number(lng), Number(lat)];
-      if (address) worker.location.address = address;
+
+    if (lng !== undefined && lat !== undefined && lng !== "" && lat !== "") {
+      const nLng = Number(lng);
+      const nLat = Number(lat);
+      const validLng = !Number.isNaN(nLng) && nLng >= -180 && nLng <= 180;
+      const validLat = !Number.isNaN(nLat) && nLat >= -90 && nLat <= 90;
+
+      if (!validLng || !validLat) {
+        return res.status(400).json({ message: "Invalid coordinates supplied" });
+      }
+
+      worker.location = {
+        type: "Point",
+        coordinates: [nLng, nLat],
+        address: address !== undefined ? address : worker.location?.address || "",
+      };
+      worker.markModified("location"); // belt-and-braces: guarantees Mongoose persists the nested doc
+    } else if (address !== undefined) {
+      worker.location.address = address;
+      worker.markModified("location");
     }
 
     await worker.save();
