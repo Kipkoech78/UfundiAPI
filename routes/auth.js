@@ -30,16 +30,17 @@ router.post(
       const existing = await User.findOne({ email: email.toLowerCase() });
       if (existing) return res.status(400).json({ message: "Email already registered" });
 
-      if (role === "worker" && !category) {
-        return res.status(400).json({ message: "Category is required for workers (e.g. Plumber, Painter)" });
-      }
+      const cleanSkills = role === "worker"
+        ? [...new Set((skills || []).map((s) => String(s).trim()).filter(Boolean))]
+        : undefined;
 
       const user = await User.create({
         name, email, password, phone,
         whatsapp: whatsapp || phone,
         role,
-        category: role === "worker" ? category : undefined,
-        bio, skills, yearsExperience,
+        category: role === "worker" ? cleanSkills[0] : undefined,
+        skills:cleanSkills,
+        bio, yearsExperience,
         location: {
           type: "Point",
           coordinates: lng && lat ? [Number(lng), Number(lat)] : [36.8219, -1.2921],

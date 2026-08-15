@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
     // Worker-only fields
     category: { type: String, enum: CATEGORIES, default: undefined },
     bio: { type: String, default: "", maxlength: 600 },
-    skills: [{ type: String }],
+    skills: [{ type: String, trim:true }],
     yearsExperience: { type: Number, default: 0 },
     avatarUrl: { type: String, default: "" },
     isAvailable: { type: Boolean, default: true },
