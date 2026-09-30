@@ -6,6 +6,8 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth");
 const workerRoutes = require("./routes/workers");
 const reviewRoutes = require("./routes/reviews");
+const analyticsRoutes = require("./routes/analytics");
+const adminRoutes = require("./routes/admin");
 
 const app = express();
 
@@ -27,6 +29,8 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/workers", workerRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use((req, res) => res.status(404).json({ message: "Route not found" }));
 
